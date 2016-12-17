@@ -1,0 +1,7 @@
+{
+  "name": "flapper-news",
+  "dependencies": {
+    "angular": "latest",
+    "angular-ui-router": "latest"
+  }
+}
