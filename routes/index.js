@@ -41,6 +41,7 @@ router.get('/posts', function(req, res, next) {
   });
 });
 
+// Get individual post by Id
 router.get('/posts/:post', function(req, res, next) {
   req.post.populate('comments', function(err, post) {
     if (err) { return next(err); }
@@ -58,6 +59,7 @@ router.post('/posts', function(req, res, next) {
   });
 });
 
+// Add a comment to the post
 router.post('/posts/:post/comments', function(req, res, next) {
   var comment = new Comment(req.body);
   comment.post = req.post;
@@ -74,6 +76,8 @@ router.post('/posts/:post/comments', function(req, res, next) {
   });
 });
 
+
+// Upvote the post
 router.put('/posts/:post/upvote', function(req, res, next) {
   req.post.upvote(function(err, post) {
     if (err) { return next(err); }
@@ -82,6 +86,7 @@ router.put('/posts/:post/upvote', function(req, res, next) {
   });
 });
 
+// Upvote the comment
 router.put('/posts/:post/comments/:comment/upvote', function(req, res, next) {
   req.comment.upvote(function(err, comment) {
     if (err) { return next(err); }
