@@ -6,7 +6,7 @@ app.config([
     function($stateProvider, $urlRouterProvider) {
         $stateProvider.state('home', {
             url: '/home',
-            templateUrl: '/home.html',
+            templateUrl: '/partial/home.html',
             controller: 'MainController',
             resolve: {
                 postPromise: ['posts', function(posts) {
@@ -59,6 +59,7 @@ app.controller('MainController', [
         $scope.test = 'Hello World!';
         $scope.posts = posts.posts;
         $scope.isLoggedIn = auth.isLoggedIn;
+        $scope.decorateDate = posts.decorateDate;
 
         $scope.addPost = function() {
             if (!$scope.title || $scope.title == '') return;
@@ -71,7 +72,7 @@ app.controller('MainController', [
         };
 
         $scope.incrementUpvotes = function(post) {
-            posts.upvotes(post);
+            posts.upvote(post);
         };
     }
 ]);
@@ -112,19 +113,21 @@ app.controller('AuthCtrl', [
         $scope.user = {};
 
         $scope.register = function() {
-            auth.register($scope.user).error(function(error){
-                $scope.error = error;
-            }).then(function(){
+            auth.register($scope.user).then(function(response){
+                auth.saveToken(response.data.token);
                 $state.go('home');
+            }, function(error){
+                $scope.error = error.data;
             });
         };
 
         $scope.logIn = function() {
-            auth.logIn($scope.user).error(function(error){
-                $scope.error = error;
-            }).then(function(){
+            auth.logIn($scope.user).then(function(response){
+                auth.saveToken(response.data.token);
                 $state.go('home');
-            });
+            }, function(error){
+                $scope.error = error.data;
+            })
         };
     }
 ]);
@@ -177,6 +180,9 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
             comment.upvotes += 1;
         });
     };
+    o.decorateDate = function(mdate) {
+        return moment(mdate).format('YYYY-MM-DD HH:mm:ss');
+    };
     return o;
 }]);
 
@@ -212,15 +218,11 @@ app.factory('auth', ['$http', '$window', function($http, $window){
     }
 
     auth.register = function(user) {
-        return $http.post('/register', user).then(function(response){
-            auth.saveToken(response.token);
-        });
+        return $http.post('/register', user);
     }
 
     auth.logIn = function(user) {
-        return $http.post('/login', user).then(function(response){
-            auth.saveToken(response.token);
-        });
+        return $http.post('/login', user);
     }
 
     auth.logOut = function() {
