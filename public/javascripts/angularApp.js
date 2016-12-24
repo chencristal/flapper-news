@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('flapperNews', ['ui.router', 'ui.bootstrap']);
 
 app.config([
     '$stateProvider',
@@ -51,15 +51,22 @@ app.config([
     }
 ]);
 
+app.filter('startFrom', function(){
+    return function(data, start) {
+        return data.slice(start);
+    }
+});
+
 app.controller('MainController', [
     '$scope',
     'posts',
     'auth',
     function($scope, posts, auth) {
-        $scope.test = 'Hello World!';
         $scope.posts = posts.posts;
         $scope.isLoggedIn = auth.isLoggedIn;
         $scope.decorateDate = posts.decorateDate;
+        $scope.pageSize = 5;
+        $scope.currentPage = 1;
 
         $scope.addPost = function() {
             if (!$scope.title || $scope.title == '') return;
@@ -181,7 +188,8 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
         });
     };
     o.decorateDate = function(mdate) {
-        return moment(mdate).format('YYYY-MM-DD HH:mm:ss');
+        // return moment(mdate).format('YYYY-MM-DD HH:mm:ss');
+        return moment(mdate).format('YYYY-MM-DD');
     };
     return o;
 }]);

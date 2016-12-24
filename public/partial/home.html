@@ -1,25 +1,44 @@
-<div class="page-header">
+<div class="content-header">
     <h1>Flapper News</h1>
 </div>
 
-<div ng-repeat="post in posts | orderBy: '-created_at'">
-    <span class="glyphicon glyphicon-thumbs-up" 
-        ng-click="incrementUpvotes(post)"></span>
-    <span style="font-size:20px; margin-left:10px;">
-        <a href="{{post.link}}" ng-show="post.link">
-            {{post.title}}
-        </a>
-        <span ng-hide="post.link">
-            {{post.title}}
-        </span>
-        <span ng-show="post.author">
-            posted by <a>{{post.author}}</a>
-        </span>
-            - upvotes : {{post.upvotes}} created at : {{decorateDate(post.created_at)}}
-        <span>
-            <a href="#!/posts/{{post._id}}">Comments</a>
-        </span>
-    </span>
+<div class="content-page">
+    <div class="row">
+        <!-- BEGIN BLOG CONTENTS -->
+        <div class="col-md-9 col-sm-9 blog-posts">
+            <ul uib-pagination total-items="posts.length" ng-model="currentPage" 
+                items-per-page="pageSize" style="padding: 20px 0px;"></ul>
+
+            <div ng-repeat="post in posts | orderBy: '-created_at' | startFrom: (currentPage-1)*pageSize | limitTo: pageSize">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4">
+                        <img class="img-responsive" alt="" src="images/img4.jpg">
+                    </div>
+                    <div class="col-md-8 col-sm-8">
+                        <h2>
+                            <a href="{{post.link}}" ng-show="post.link">{{post.title}}</a>
+                            <span ng-hide="post.link">{{post.title}}</span>
+                        </h2>
+                        <ul class="blog-info">
+                            <li>
+                                <i class="fa fa-calendar"></i> {{decorateDate(post.created_at)}} 
+                                <span ng-show="post.author"> posted by {{post.author}} </span>
+                            </li>
+                            <li><i class="fa fa-comments"></i> {{post.comments.length}}</li>
+                            <li><i class="fa fa-heart" ng-click="incrementUpvotes(post)"></i> {{post.upvotes}}</li>
+                            <!--<li><i class="fa fa-tags"></i> Metronic, Keenthemes, UI Design</li>-->
+                        </ul>
+                        <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui sint blanditiis prae sentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non eleifend enim a feugiat. Pellentesque viverra vehicula sem ut volutpat. Lorem ipsum dolor sit amet, consectetur adipiscing condimentum eleifend enim a feugiat.</p>
+                        <a href="#!/posts/{{post._id}}" class="more">Read more <i class="icon-angle-right"></i></a>
+                    </div>
+                </div>
+                <hr class="blog-post-sep">
+            </div>
+
+            <ul uib-pagination total-items="posts.length" ng-model="currentPage" items-per-page="pageSize"></ul>
+        </div>
+        <!-- END BLOG CONTENTS -->
+    </div>
 </div>
 
 <div ng-hide="isLoggedIn()">
