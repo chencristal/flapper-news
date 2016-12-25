@@ -4,15 +4,27 @@ app.config([
     '$stateProvider',
     '$urlRouterProvider',
     function($stateProvider, $urlRouterProvider) {
-        $stateProvider.state('home', {
-            url: '/home',
-            templateUrl: '/partial/home.html',
-            controller: 'MainController',
-            resolve: {
-                postPromise: ['posts', function(posts) {
-                    return posts.getAll();
-                }]
-            }
+        $stateProvider
+            .state('home', {
+                url: '/home',
+                templateUrl: '/partial/home.html',
+                controller: 'MainController',
+                resolve: {
+                    postPromise: ['posts', function(posts) {
+                        return posts.getAll();
+                    }]
+                }
+            });
+
+        $stateProvider.state('add_post', {
+            url: '/add_post',
+            templateUrl: '/partial/add_post.html',
+            controller: 'NewPostController',
+            onEnter: ['$state', 'auth', function($state, auth) {
+                if (!auth.isLoggedIn()) {
+                    $state.go('home');
+                }
+            }]
         });
 
         $stateProvider.state('posts', {
@@ -55,7 +67,42 @@ app.filter('startFrom', function(){
     return function(data, start) {
         return data.slice(start);
     }
+})
+.filter('contentLimit', function(){
+    return function(content, limit) {
+        if (!content) return '';
+        
+        if (content.length > limit + 10) {
+            return content.substring(0, limit) + '...';
+        } else {
+            return content;
+        }
+    }
 });
+
+app.controller('NewPostController', [
+    '$scope',
+    'posts',
+    'auth',
+    function ($scope, posts, auth) {
+        $scope.addNewPost = function() {
+            if (!$scope.title || $scope.title == '' ||
+                !$scope.link || $scope.link == '' ||
+                !$scope.content || $scope.content == '')
+                return;
+            posts.create({
+                title: $scope.title,
+                link: $scope.link,
+                content: $scope.content,
+                author: auth.currentUser()
+            });
+
+            $scope.title = '';
+            $scope.link = '';
+            $scope.content = '';
+        };
+    }
+]);
 
 app.controller('MainController', [
     '$scope',
@@ -64,7 +111,6 @@ app.controller('MainController', [
     function($scope, posts, auth) {
         $scope.posts = posts.posts;
         $scope.isLoggedIn = auth.isLoggedIn;
-        $scope.decorateDate = posts.decorateDate;
         $scope.pageSize = 5;
         $scope.currentPage = 1;
 
@@ -92,7 +138,7 @@ app.controller('PostsController', [
     function($scope, posts, post, auth) {
         $scope.post = post;
         $scope.isLoggedIn = auth.isLoggedIn;
-
+        
         $scope.addComment = function() {
             if (!$scope.body || $scope.body === '') return;
             if ($scope.post.comments === undefined)
@@ -104,11 +150,11 @@ app.controller('PostsController', [
                 $scope.post.comments.push(response.data);
             });
             $scope.body = '';
-        }
+        };
 
         $scope.incrementUpvotes = function(comment) {
             posts.upvoteComment(post, comment);
-        }
+        };
     }
 ]);
 
@@ -187,10 +233,6 @@ app.factory('posts', ['$http', 'auth', function($http, auth){
             comment.upvotes += 1;
         });
     };
-    o.decorateDate = function(mdate) {
-        // return moment(mdate).format('YYYY-MM-DD HH:mm:ss');
-        return moment(mdate).format('YYYY-MM-DD');
-    };
     return o;
 }]);
 
@@ -203,8 +245,7 @@ app.factory('auth', ['$http', '$window', function($http, $window){
     };
     auth.getToken = function() {
         return $window.localStorage['flapper-news-token'];
-    }
-    
+    };
     auth.isLoggedIn = function() {
         var token = auth.getToken();
 
@@ -222,6 +263,9 @@ app.factory('auth', ['$http', '$window', function($http, $window){
             var payload = JSON.parse($window.atob(token.split('.')[1]));
 
             return payload.username;
+        } 
+        else {
+            return '';
         }
     }
 

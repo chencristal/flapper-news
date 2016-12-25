@@ -1,3 +1,6 @@
 span.glyphicon-thumbs-up { 
 	cursor:pointer;
 }
+.white-color {
+	color: white !important;
+}

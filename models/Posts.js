@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 var PostSchema = new mongoose.Schema({
     title: String,
     link: String,
+    author: String,
+    content: String,
     created_at: { type: Date, default: Date.now },
     upvotes: { type: Number, default: 0 },
     comments: [{

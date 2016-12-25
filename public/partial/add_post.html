@@ -1,0 +1,30 @@
+<div class="content-header">
+    <h1>Flapper News</h1>
+</div>
+
+<div class="content-page">
+	<div class="row">
+		<div class="col-md-9 col-sm-12">
+			<div class="add-post padding-top-40">
+				<h3>Add a Post</h3>
+				<form role="form" ng-submit="addNewPost()">
+					<div class="form-group">
+						<label>Title</label>
+						<input class="form-control" ng-model="title" type="text" placeholder="Title">
+					</div>
+					<div class="form-group">
+						<label>Related Link</label>
+						<input class="form-control" ng-model="link" type="text" placeholder="Related Link">
+					</div>
+					<div class="form-group">
+						<label>Content</label>
+						<textarea class="form-control" ng-model="content" rows="8" placeholder="Post Content"></textarea>
+					</div>
+					<p>
+						<button class="btn btn-primary" type="submit">Publish</button>
+					</p>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
