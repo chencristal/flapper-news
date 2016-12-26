@@ -50,7 +50,7 @@ app.config([
         })
         .state('register', {
             url: '/register',
-            templateUrl: '/register.html',
+            templateUrl: '/partial/register.html',
             controller: 'AuthCtrl',
             onEnter: ['$state', 'auth', function($state, auth) {
                 if (auth.isLoggedIn()) {
@@ -166,6 +166,19 @@ app.controller('AuthCtrl', [
         $scope.user = {};
 
         $scope.register = function() {
+            if (!$scope.user.username || !$scope.user.email || !$scope.user.password) {
+                $scope.error = {
+                    message: 'Please fill out all fields.'
+                };
+                return;
+            }
+            else if ($scope.user.username.length < 4) {
+                $scope.error = {
+                    message: 'The username must be at least 4 characters.'
+                };
+                return;
+            }
+
             auth.register($scope.user).then(function(response){
                 auth.saveToken(response.data.token);
                 $state.go('home');

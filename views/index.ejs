@@ -28,20 +28,9 @@
 
     <!-- BEGIN HEADER -->
     <div class="header"></div>
-    <!-- END HEADER -->    
+    <!-- END HEADER -->
+    <ui-view></ui-view> 
 
-    <div class="main">
-        <div class="container">
-            <div class="row margin-top-40" ng-controller="MainController">
-                <div class="col-md-12 col-sm-12">
-                    <ui-view></ui-view>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <ng-include src="'/partial/footer.html'"></ng-include>
-    
 <script src="/bower_components/angular/angular.min.js"></script>
 <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 <script src="/bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
@@ -87,27 +76,6 @@
                 placeholder="Comment" ng-model="body">
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
-    </form>
-</script>
-
-<script type="text/ng-template" id="/register.html">
-    <div class="page-header">
-        <h1>Flapper News</h1>
-    </div>
-    <div ng-show="error" class="alert alert-danger row">
-        <span>{{ error.message }}</span>
-    </div>
-    <form ng-submit="register()" style="margin-top:30px;">
-        <h3>Register</h3>
-        <div class="form-group">
-            <input type="text" class="form-control" placeholder="Username"
-                ng-model="user.username">
-        </div>
-        <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password"
-                ng-model="user.password">
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
     </form>
 </script>
 

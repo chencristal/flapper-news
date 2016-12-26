@@ -112,13 +112,19 @@ router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, nex
   });
 });
 
+
+// Register a new user account
 router.post('/register', function(req, res, next){
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.username || !req.body.password || !req.body.email) {
     return res.status(400).json({message: 'Please fill out all fields'});
+  }
+  else if (req.body.username.length < 4) {
+    return res.status(400).json({message: 'The username must be at least 4 characters.'});
   }
 
   var user = new User();
   user.username = req.body.username;
+  user.email = req.body.email;
   user.setPassword(req.body.password);
 
   user.save(function(err) {
@@ -128,6 +134,8 @@ router.post('/register', function(req, res, next){
   });
 });
 
+
+// Login account
 router.post('/login', function(req, res, next) {
   if (!req.body.username || !req.body.password) {
     return res.status(400).json({message: 'Please fill out all fields'});
