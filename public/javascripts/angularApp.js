@@ -40,7 +40,7 @@ app.config([
 
         $stateProvider.state('login', {
             url: '/login',
-            templateUrl: '/login.html',
+            templateUrl: '/partial/login.html',
             controller: 'AuthCtrl',
             onEnter: ['$state', 'auth', function($state, auth) {
                 if (auth.isLoggedIn()) {

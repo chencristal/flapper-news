@@ -3,9 +3,12 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var passport = require('passport');
 var jwt = require('express-jwt');
+
+// define models
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
+var UserHist = mongoose.model('UserHist');
 
 /*
 The userPropery option specifies which property on 
@@ -146,6 +149,10 @@ router.post('/login', function(req, res, next) {
     if (err) { return next(err); }
 
     if (user) {
+      var login_hist = new UserHist();
+      login_hist.userLogin(user._id, function(err, userhist) {
+        if (err) { console.error(err); }
+      });
       return res.json({token: user.generateJWT()});
     } else {
       return res.status(401).json(info);

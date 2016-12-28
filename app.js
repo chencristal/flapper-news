@@ -9,6 +9,7 @@ var passport = require('passport');
 require('./models/Posts');
 require('./models/Comments');
 require('./models/Users');
+require('./models/UserHists');
 require('./config/passport');
 
 var index = require('./routes/index');
