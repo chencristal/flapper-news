@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router', 'ui.bootstrap']);
+var app = angular.module('flapperNews', ['ui.router', 'ui.bootstrap', 'ngFileUpload']);
 
 app.config([
     '$stateProvider',
@@ -84,22 +84,53 @@ app.controller('NewPostController', [
     '$scope',
     'posts',
     'auth',
-    function ($scope, posts, auth) {
-        $scope.addNewPost = function() {
+    'Upload',
+    '$timeout',
+    function ($scope, posts, auth, Upload, $timeout) {
+        $scope.addNewPost = function(form) {
             if (!$scope.title || $scope.title == '' ||
                 !$scope.link || $scope.link == '' ||
                 !$scope.content || $scope.content == '')
                 return;
-            posts.create({
+
+            $scope.featured.upload = Upload.upload({
+                url: '/upload',
+                method: 'POST',
+                data: {
+                    title: $scope.title,
+                    link: $scope.link,
+                    content: $scope.content,
+                    author: auth.currentUser()
+                }
+            });
+
+            $scope.featured.upload.then(function(response) {
+                $timeout(function() {
+                    $scope.featured.result = response.data;
+                });
+            }, function(error) {
+                if (error.status > 0)
+                    $scope.errorMsg = error.status + ': ' + error.data;
+            }, function(event) {
+                // Math.min is to fix IE which reports 200% sometimes
+                $scope.featured.progress = Math.min(100, parseInt(100.0 * event.loaded / event.total));
+            });
+
+            /*posts.create({
                 title: $scope.title,
                 link: $scope.link,
                 content: $scope.content,
                 author: auth.currentUser()
-            });
+            });*/
 
             $scope.title = '';
             $scope.link = '';
             $scope.content = '';
+
+            if (form) {
+                form.$setPristine();
+                form.$setUntouched();
+            }
         };
     }
 ]);

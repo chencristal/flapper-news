@@ -4,6 +4,15 @@
         <div class="row margin-top-40">
             <div class="col-md-12 col-sm-12">
 				<div class="content-page">
+					<style>
+						.form-control.ng-touched.ng-invalid {
+							border-color: #ebccd1;
+						}
+						img.thumb {
+							max-width: 50%;
+							max-height: 250px;
+						}
+					</style>
 
 					<div class="content-header">
 					    <h1>Flapper News</h1>
@@ -14,23 +23,47 @@
 						<div class="col-md-9 col-sm-12">
 							<div class="add-post padding-top-40">
 								<h3>Add a Post</h3>
-								<form role="form" ng-submit="addNewPost()">
+								<form name="form" novalidate role="form" ng-submit="addNewPost(form)" encType="multipart/form-data">
 									<div class="form-group">
-										<label>Title</label>
-										<input class="form-control" ng-model="title" type="text" placeholder="Title">
+										<label class="control-label">Title</label>
+										<input class="form-control" name="title" ng-model="title" type="text" placeholder="Title" ng-required="true">
+										<span ng-show="form.title.$touched && form.title.$error.required" 
+											class="help-block help-block-error" style="color: #a94442">This field is required.</span>
 									</div>
 									<div class="form-group">
-										<label>Related Link</label>
-										<input class="form-control" ng-model="link" type="text" placeholder="Related Link">
+										<label class="control-label">Related Link</label>
+										<input class="form-control" name="link" ng-model="link" type="text" placeholder="Related Link" ng-required="true">
+										<span ng-show="form.link.$touched && form.link.$error.required" 
+											class="help-block help-block-error" style="color: #a94442">This field is required.</span>
 									</div>
 									<div class="form-group">
-										<label>Content</label>
-										<textarea class="form-control" ng-model="content" rows="8" placeholder="Post Content"></textarea>
+										<label class="control-label">Content</label>
+										<textarea class="form-control" name="content" ng-model="content" rows="8" placeholder="Post Content" ng-required="true"></textarea>
+										<span ng-show="form.content.$touched && form.content.$error.required" 
+											class="help-block help-block-error" style="color: #a94442">This field is required.</span>
+									</div>
+									<div class="form-group">
+										<label class="control-label">Featured Image</label>
+										<input type="file" ngf-select ng-model="featured" name="featured"    
+								             accept="image/*" ngf-max-size="2MB" ng-required="true" ngf-model-invalid="errorFile">
+										<span ng-show="form.content.$touched && form.featured.$error.required" class="help-block help-block-error" 
+											style="color: #a94442">This field is required.</span>
+										<span class="help-block help-block-error" ng-show="form.featured.$error.maxSize" 
+											style="color: #a94442">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
+										<img ng-show="form.featured.$valid" ngf-thumbnail="featured" class="thumb"> 
+										<button type="button" class="btn btn-warning" ng-click="featured = null" ng-show="featured" style="vertical-align: bottom">Remove</button>
 									</div>
 									<p>
-										<button class="btn btn-primary" type="submit">Publish</button>
+										<button class="btn btn-primary" type="submit" ng-disabled="!form.$valid">Publish</button>
 										<a href="#!/home" class="btn btn-info">Go To Home!</a>
 									</p>
+									<div class="form-group">
+										<span class="progress" ng-show="featured.progress >= 0">
+								        	<div style="width:{{featured.progress}}%" ng-bind="featured.progress + '%'"></div>
+								      	</span>
+								      	<span class="help-block help-block-error" ng-show="featured.result">Upload Successful</span>
+								      	<span class="help-block help-block-error" ng-show="errorMsg">{{errorMsg}}</span>
+									</div>
 								</form>
 							</div>
 						</div>
