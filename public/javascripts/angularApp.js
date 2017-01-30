@@ -85,35 +85,41 @@ app.controller('NewPostController', [
     'posts',
     'auth',
     'Upload',
+    '$window',
     '$timeout',
-    function ($scope, posts, auth, Upload, $timeout) {
+    function ($scope, posts, auth, Upload, $window, $timeout) {
         $scope.addNewPost = function(form) {
             if (!$scope.title || $scope.title == '' ||
                 !$scope.link || $scope.link == '' ||
                 !$scope.content || $scope.content == '')
                 return;
 
-            $scope.featured.upload = Upload.upload({
+            // $scope.featured.upload = 
+            Upload.upload({
                 url: '/upload',
                 method: 'POST',
                 data: {
                     title: $scope.title,
                     link: $scope.link,
                     content: $scope.content,
-                    author: auth.currentUser()
+                    author: auth.currentUser(),
+                    file: $scope.featured,
                 }
-            });
-
-            $scope.featured.upload.then(function(response) {
-                $timeout(function() {
-                    $scope.featured.result = response.data;
-                });
-            }, function(error) {
-                if (error.status > 0)
-                    $scope.errorMsg = error.status + ': ' + error.data;
-            }, function(event) {
-                // Math.min is to fix IE which reports 200% sometimes
-                $scope.featured.progress = Math.min(100, parseInt(100.0 * event.loaded / event.total));
+            }).then(function(resp) {    // upload function returns a promise
+                if (resp.data.error_code == 0) {
+                    $window.alert('Success ' + resp.config.data.file.name + ' uploaded. Response: ');
+                    console.log(resp);
+                } else {
+                    $window.alert('an error occured');
+                }
+            }, function(resp) {     // catch error
+                console.log('Error status: ' + resp.status);
+                $window.alert('Error status: ' + resp.status);
+            }, function(evt) {
+                console.log(evt);
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                $scope.featured.progress = 'progress: ' + progressPercentage + '% ';
             });
 
             /*posts.create({
@@ -123,14 +129,14 @@ app.controller('NewPostController', [
                 author: auth.currentUser()
             });*/
 
-            $scope.title = '';
+            /*$scope.title = '';
             $scope.link = '';
             $scope.content = '';
 
             if (form) {
                 form.$setPristine();
                 form.$setUntouched();
-            }
+            }*/
         };
     }
 ]);

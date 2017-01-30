@@ -21,36 +21,39 @@ By default it's set on user but we're using payload
 This also avoids confusion since the payload isn't an instance of our User model.
 */
 var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, './public/uploads/');
+  },
+  filename: function(req, file, cb) {
+    var datetimestamp = Date.now();
+    var filename = file.fieldname + '-' + datetimestamp + '.' + 
+      file.originalname.split('.')[file.originalname.split('.').length - 1];
+    cb(null, filename);
+  }
+});
+
+var upload = multer({
+  storage: storage
+}).single('file');
+
+// API path that will upload the files
+router.post('/upload', function(req, res, next) {
+  upload(req, res, function(err) {
+    if (err) {
+      res.json({error_code:1, err_desc:err});
+      return;
+    }
+    console.log(req.body);
+    console.log(req.file);
+    res.json({error_code:0, err_desc:null});
+  });
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
-// default options 
-var storage = multer.diskStorage({ //multers disk storage settings
-    destination: function (req, file, cb) {
-        cb(null, './public/images/')
-    },
-    filename: function (req, file, cb) {
-        var datetimestamp = Date.now();
-        cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
-    }
-});
-var upload = multer({ //multer settings
-                storage: storage
-            }).single('file');
-/** API path that will upload the files */
-router.post('/upload', function(req, res) {
-    upload(req,res,function(err){
-        if(err){
-             res.json({error_code:1, err_desc:err});
-             return;
-        }
-        res.json({error_code:0, err_desc:null});
-    });
-});
-
 
 router.param('post', function(req, res, next, id) {
   var query = Post.findById(id);

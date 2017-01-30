@@ -44,12 +44,21 @@
 									</div>
 									<div class="form-group">
 										<label class="control-label">Featured Image</label>
-										<input type="file" ngf-select ng-model="featured" name="featured"    
-								             accept="image/*" ngf-max-size="2MB" ng-required="true" ngf-model-invalid="errorFile">
+										<input 
+											type="file" 
+											ngf-select 
+											ng-model="featured" 
+											name="featured" 
+											ngf-pattern="'image/*'"
+								            accept="image/*" 
+								            ngf-max-size="20MB" 
+								            ng-required="true"
+								            />
+
 										<span ng-show="form.content.$touched && form.featured.$error.required" class="help-block help-block-error" 
 											style="color: #a94442">This field is required.</span>
 										<span class="help-block help-block-error" ng-show="form.featured.$error.maxSize" 
-											style="color: #a94442">File too large {{errorFile.size / 1000000|number:1}}MB: max 2M</span>
+											style="color: #a94442">File too large {{featured.size / 1000000|number:1}}MB: max 20M</span>
 										<img ng-show="form.featured.$valid" ngf-thumbnail="featured" class="thumb"> 
 										<button type="button" class="btn btn-warning" ng-click="featured = null" ng-show="featured" style="vertical-align: bottom">Remove</button>
 									</div>
@@ -57,13 +66,6 @@
 										<button class="btn btn-primary" type="submit" ng-disabled="!form.$valid">Publish</button>
 										<a href="#!/home" class="btn btn-info">Go To Home!</a>
 									</p>
-									<div class="form-group">
-										<span class="progress" ng-show="featured.progress >= 0">
-								        	<div style="width:{{featured.progress}}%" ng-bind="featured.progress + '%'"></div>
-								      	</span>
-								      	<span class="help-block help-block-error" ng-show="featured.result">Upload Successful</span>
-								      	<span class="help-block help-block-error" ng-show="errorMsg">{{errorMsg}}</span>
-									</div>
 								</form>
 							</div>
 						</div>
