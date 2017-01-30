@@ -18,3 +18,16 @@ PostSchema.methods.upvote = function(cb) {
 }
 
 mongoose.model('Post', PostSchema);
+
+
+var PostImageSchema = new mongoose.Schema({
+    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
+    originalname: String,
+    destination: String,
+    filename: String,
+    path: String,
+    size: {type: Number, default: 0},
+    created_at: { type: Date, default: Date.now }
+});
+
+mongoose.model('PostImage', PostImageSchema);

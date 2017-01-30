@@ -7,6 +7,7 @@ var multer = require('multer');
 
 // define models
 var Post = mongoose.model('Post');
+var PostImage = mongoose.model('PostImage');
 var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 var UserHist = mongoose.model('UserHist');
@@ -44,8 +45,33 @@ router.post('/upload', function(req, res, next) {
       res.json({error_code:1, err_desc:err});
       return;
     }
-    console.log(req.body);
-    console.log(req.file);
+
+    var post = new Post({
+      title: req.body.title,
+      link: req.body.link,
+      content: req.body.content,
+      author: req.body.author,
+    });
+
+    var file = new PostImage({
+      originalname: req.file.originalname,
+      destination: req.file.destination,
+      filename: req.file.filename,
+      path: req.file.path,
+      size: req.file.size,
+    });
+
+    post.save(function(err, post){
+      if (err) { return next(err); }
+      console.log(post);
+
+      file.post_id = post._id;
+      file.save(function(err, file){
+        if (err) { return next(err); }
+        console.log(file);
+      });
+    });
+
     res.json({error_code:0, err_desc:null});
   });
 });
