@@ -29,7 +29,8 @@
                                 | limitTo: pageSize : (currentPage-1)*pageSize">
                                 <div class="row">
                                     <div class="col-md-4 col-sm-4">
-                                        <img class="img-responsive" alt="" src="images/img4.jpg">
+                                        <img class="img-responsive" alt="" ng-show="post.thumb.filename" ng-src="uploads/{{post.thumb.filename}}" err-src="images/img4.jpg">
+                                        <img class="img-responsive" alt="" ng-hide="post.thumb.filename" ng-src="images/img4.jpg">
                                     </div>
                                     <div class="col-md-8 col-sm-8">
                                         <h2>

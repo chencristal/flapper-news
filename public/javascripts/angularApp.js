@@ -78,6 +78,17 @@ app.filter('startFrom', function(){
             return content;
         }
     }
+})
+.directive('errSrc', function() {
+    return {
+        link: function(scope, element, attrs) {
+            element.bind('error', function() {
+                if (attrs.src != attrs.errSrc) {
+                    attrs.$set('src', attrs.errSrc);
+                }
+            });
+        }
+    };
 });
 
 app.controller('NewPostController', [
@@ -122,21 +133,14 @@ app.controller('NewPostController', [
                 $scope.featured.progress = 'progress: ' + progressPercentage + '% ';
             });
 
-            /*posts.create({
-                title: $scope.title,
-                link: $scope.link,
-                content: $scope.content,
-                author: auth.currentUser()
-            });*/
-
-            /*$scope.title = '';
+            $scope.title = '';
             $scope.link = '';
             $scope.content = '';
 
             if (form) {
                 form.$setPristine();
                 form.$setUntouched();
-            }*/
+            }
         };
     }
 ]);

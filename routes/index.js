@@ -61,14 +61,13 @@ router.post('/upload', function(req, res, next) {
       size: req.file.size,
     });
 
-    post.save(function(err, post){
+    file.save(function(err, file){
       if (err) { return next(err); }
-      console.log(post);
 
-      file.post_id = post._id;
-      file.save(function(err, file){
+      post.thumb = file._id;
+      post.save(function(err, post){
         if (err) { return next(err); }
-        console.log(file);
+        console.log(post);
       });
     });
 
@@ -107,10 +106,15 @@ router.param('comment', function(req, res, next, id) {
 
 // Return a list of posts and associated metadata
 router.get('/posts', function(req, res, next) {
-  Post.find(function(err, posts){
-    if (err) { return next(err); }
-    res.json(posts);
-  });
+  Post
+    .find()
+    .populate('thumb')
+    .exec(function(err, posts){
+      if (err) { return next(err); }
+      
+      console.log(posts);
+      res.json(posts);
+    });
 });
 
 // Get individual post by Id

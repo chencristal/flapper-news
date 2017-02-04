@@ -9,7 +9,10 @@ var PostSchema = new mongoose.Schema({
     upvotes: { type: Number, default: 0 },
     comments: [{
         type: mongoose.Schema.Types.ObjectId, ref: 'Comment'
-    }]
+    }],
+    thumb: {
+        type: mongoose.Schema.Types.ObjectId, ref: 'PostImage'
+    }
 });
 
 PostSchema.methods.upvote = function(cb) {
@@ -21,7 +24,6 @@ mongoose.model('Post', PostSchema);
 
 
 var PostImageSchema = new mongoose.Schema({
-    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     originalname: String,
     destination: String,
     filename: String,
