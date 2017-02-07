@@ -62,6 +62,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-mongoose.connect('mongodb://localhost/news');
+mongoose.connect('mongodb://john:mlab_john@ds145659.mlab.com:45659/flapper-news');
 
 module.exports = app;
